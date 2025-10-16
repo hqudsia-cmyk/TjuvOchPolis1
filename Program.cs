@@ -13,7 +13,7 @@ namespace TjuvOchPolis
 
         static void Main()
         {
-
+            Console.WriteLine("Testing 123");
            
 
             int width = 100;
@@ -146,8 +146,9 @@ namespace TjuvOchPolis
 
             Console.SetCursorPosition(2, startY); // Titel på fängelset
             Console.Write("Prison");
+            
         }
 
-
+        
     }
 }
