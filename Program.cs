@@ -13,7 +13,7 @@ namespace TjuvOchPolis
 
         static void Main()
         {
-            Console.WriteLine("Testing 123");
+            
            
 
             int width = 100;
