@@ -11,10 +11,10 @@ namespace TjuvOchPolis1
     {
         private static Random rand = new Random();
 
-        // Rån
+        
         public static void HandleRobbery(Thief thief, Citizen citizen, List<Person> people, int width, int height)
         {
-            // Rensa området
+            
             ClearCityArea(width, height);
 
             // Visa bara rånaren och offret
@@ -23,11 +23,6 @@ namespace TjuvOchPolis1
             Console.SetCursorPosition(citizen.Position.X, citizen.Position.Y);
             Console.Write(citizen.Symbol);
 
-            
-            Console.SetCursorPosition(2, 0);
-            Console.Write("RÅN PÅGÅR!");
-
-            
             ThiefStealsFromCitizen((ThiefInventory)thief.Inventory, (CitizenInventory)citizen.Inventory);
 
             Thread.Sleep(3000); 
@@ -38,7 +33,7 @@ namespace TjuvOchPolis1
             RedrawPeople(people);
         }
 
-        // Gripande
+        
         public static void HandleArrest(Police police, Thief thief, List<Person> people, int width, int height)
         {
             ClearCityArea(width, height);
@@ -48,19 +43,12 @@ namespace TjuvOchPolis1
             Console.SetCursorPosition(thief.Position.X, thief.Position.Y);
             Console.Write(thief.Symbol);
 
-            Console.SetCursorPosition(2, 0);
-            Console.Write("POLISEN AGERAR!");
-
             PoliceCatchesThief((PoliceInventory)police.Inventory, (ThiefInventory)thief.Inventory);
-
             Thread.Sleep(1000);
 
-            Console.SetCursorPosition(2, 0);
-            Console.Write("City");
             RedrawPeople(people);
         }
 
-        
         private static void ClearCityArea(int width, int height)
         {
             for (int y = 1; y < height - 1; y++)
@@ -82,7 +70,6 @@ namespace TjuvOchPolis1
             }
         }
 
-        
         private static void ThiefStealsFromCitizen(ThiefInventory thief, CitizenInventory citizen)
         {
             if (citizen.Items.Count == 0) return;
@@ -94,7 +81,7 @@ namespace TjuvOchPolis1
             citizen.Items.RemoveAt(index);
 
             Console.SetCursorPosition(0, 25);
-            Console.WriteLine($"Tjuven stal {stolenItem} från medborgaren!  ");
+            Console.WriteLine($"Tjuven stal {stolenItem} från medborgaren!");
         }
 
         private static void PoliceCatchesThief(PoliceInventory police, ThiefInventory thief)
@@ -112,7 +99,7 @@ namespace TjuvOchPolis1
             else
             {
                 Console.SetCursorPosition(0, 27);
-                Console.WriteLine("Tjuven lyckades undkomma!          ");
+                Console.WriteLine("Tjuven lyckades undkomma!");
             }
         }
     }

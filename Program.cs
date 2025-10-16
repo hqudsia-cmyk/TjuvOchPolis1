@@ -13,28 +13,22 @@ namespace TjuvOchPolis
 
         static void Main()
         {
-            
-           
+            Console.SetBufferSize(120, 50);
+            Console.SetWindowSize(120, 50);
+
 
             int width = 100;
             int height = 25;
 
-            int prisonWidth = 10;
-            int prisonHeight = 10;
-            int startY = height + 1;
+            int prisonWidth = 15;
+            int prisonHeight = 15;
+            int startY = height - 15;
+            int startX = width + 1;
             DrawBorder(width, height);
 
-            DrawPrisonBorder(prisonWidth, prisonHeight, startY);
+            DrawPrisonBorder(prisonWidth, prisonHeight, startY, startX);
 
-            var people = new List<Person>();
-
-            // Skapa personer 
-            for (int i = 0; i < 10; i++)
-                people.Add(new Police($"Polis{i + 1}", new Position(rand.Next(1, width - 1), rand.Next(1, height - 1))));
-            for (int i = 0; i < 20; i++)
-                people.Add(new Thief($"Tjuv{i + 1}", new Position(rand.Next(1, width - 1), rand.Next(1, height - 1))));
-            for (int i = 0; i < 30; i++)
-                people.Add(new Citizen($"Medborgare{i + 1}", new Position(rand.Next(1, width - 1), rand.Next(1, height - 1))));
+            List<Person> people = PeopleFactory.CreatePeople(width, height);
 
             // Rita första gången 
             foreach (var person in people)
@@ -94,8 +88,6 @@ namespace TjuvOchPolis
                     }
                 }
 
-
-
                 // Rita nya positioner
                 foreach (var person in people)
                 {
@@ -106,9 +98,6 @@ namespace TjuvOchPolis
                 Thread.Sleep(400);
             }
         }
-
-
-       
 
         // Rita upp staden
         static void DrawBorder(int width, int height)
@@ -130,13 +119,13 @@ namespace TjuvOchPolis
         }
 
 
-        static void DrawPrisonBorder(int prisonWidth, int prisonHeight, int startY)
+        static void DrawPrisonBorder(int prisonWidth, int prisonHeight, int startY, int startX)
         {
             for (int y = 0; y < prisonHeight; y++)
             {
                 for (int x = 0; x < prisonWidth; x++)
                 {
-                    Console.SetCursorPosition(x, y + startY);
+                    Console.SetCursorPosition(startX + x, y + startY);
                     if (y == 0 || y == prisonHeight - 1 || x == 0 || x == prisonWidth - 1)
                         Console.Write("#");
                     else
@@ -144,7 +133,7 @@ namespace TjuvOchPolis
                 }
             }
 
-            Console.SetCursorPosition(2, startY); // Titel på fängelset
+            Console.SetCursorPosition(startX, startY); 
             Console.Write("Prison");
             
         }
