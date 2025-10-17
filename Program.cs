@@ -59,13 +59,20 @@ namespace TjuvOchPolis
                 //  Flytta och wrap-around
                 foreach (var person in people)
                 {
-                    person.Move();
+                    if (person.Symbol == 'F') // fångar
+                    {
+                        ((Thief)person).MoveInPrison(startX, startY, prisonWidth, prisonHeight);
+                    }
+                    else
+                    {
+                        person.Move();
 
-                    if (person.Position.X <= 0) person.Position = new Position(width - 2, person.Position.Y);
-                    else if (person.Position.X >= width - 1) person.Position = new Position(1, person.Position.Y);
+                        if (person.Position.X <= 0) person.Position = new Position(width - 2, person.Position.Y);
+                        else if (person.Position.X >= width - 1) person.Position = new Position(1, person.Position.Y);
 
-                    if (person.Position.Y <= 0) person.Position = new Position(person.Position.X, height - 2);
-                    else if (person.Position.Y >= height - 1) person.Position = new Position(person.Position.X, 1);
+                        if (person.Position.Y <= 0) person.Position = new Position(person.Position.X, height - 2);
+                        else if (person.Position.Y >= height - 1) person.Position = new Position(person.Position.X, 1);
+                    }
                 }
 
                 // Interaktioner
@@ -83,7 +90,18 @@ namespace TjuvOchPolis
                     {
                         if (thief.Position.X == police.Position.X && thief.Position.Y == police.Position.Y)
                         {
-                            Interactions.HandleArrest(police, thief, people, width, height);
+                            Interactions.HandleArrest(police, thief, people, width, height, startX, startY, prisonWidth, prisonHeight);
+                        }
+                    }
+                }
+
+                foreach (var police in people.OfType<Police>())
+                {
+                    foreach (var citizen in people.OfType<Citizen>())
+                    {
+                        if (police.Position.X == citizen.Position.X && police.Position.Y == citizen.Position.Y)
+                        {
+                            Interactions.CitizenGreetings(citizen, police, people, width, height);
                         }
                     }
                 }
@@ -94,50 +112,48 @@ namespace TjuvOchPolis
                     Console.SetCursorPosition(person.Position.X, person.Position.Y);
                     Console.Write(person.Symbol);
                 }
-
                 Thread.Sleep(400);
             }
-        }
 
-        // Rita upp staden
-        static void DrawBorder(int width, int height)
-        {
-            Console.Clear();
-            for (int y = 0; y < height; y++)
+            // Rita upp staden
+            static void DrawBorder(int width, int height)
             {
-                for (int x = 0; x < width; x++)
+                Console.Clear();
+                for (int y = 0; y < height; y++)
                 {
-                    if (y == 0 || y == height - 1 || x == 0 || x == width - 1)
-                        Console.Write("#");
-                    else
-                        Console.Write(" ");
+                    for (int x = 0; x < width; x++)
+                    {
+                        if (y == 0 || y == height - 1 || x == 0 || x == width - 1)
+                            Console.Write("#");
+                        else
+                            Console.Write(" ");
+                    }
+                    Console.WriteLine();
                 }
-                Console.WriteLine();
-            }
-            Console.SetCursorPosition(2, 0);
-            Console.Write("City");
-        }
-
-
-        static void DrawPrisonBorder(int prisonWidth, int prisonHeight, int startY, int startX)
-        {
-            for (int y = 0; y < prisonHeight; y++)
-            {
-                for (int x = 0; x < prisonWidth; x++)
-                {
-                    Console.SetCursorPosition(startX + x, y + startY);
-                    if (y == 0 || y == prisonHeight - 1 || x == 0 || x == prisonWidth - 1)
-                        Console.Write("#");
-                    else
-                        Console.Write(" ");
-                }
+                Console.SetCursorPosition(2, 0);
+                Console.Write("City");
             }
 
-            Console.SetCursorPosition(startX, startY); 
-            Console.Write("Prison");
-            
-        }
+            static void DrawPrisonBorder(int prisonWidth, int prisonHeight, int startY, int startX)
+            {
+                for (int y = 0; y < prisonHeight; y++)
+                {
+                    for (int x = 0; x < prisonWidth; x++)
+                    {
+                        Console.SetCursorPosition(startX + x, y + startY);
+                        if (y == 0 || y == prisonHeight - 1 || x == 0 || x == prisonWidth - 1)
+                            Console.Write("#");
+                        else
+                            Console.Write(" ");
+                    }
+                }
 
-        
+                Console.SetCursorPosition(startX, startY);
+                Console.Write("Prison");
+
+            }
+
+
+        }
     }
 }
