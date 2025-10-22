@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Threading;
 using TjuvOchPolis1;
@@ -9,10 +10,14 @@ namespace TjuvOchPolis
 {
     class Program
     {
-        static Random rand = new Random();
-
         static void Main()
         {
+
+           
+
+            List<string> newsFeed = new List<string>();
+
+
             Console.SetBufferSize(120, 50);
             Console.SetWindowSize(120, 50);
 
@@ -30,18 +35,29 @@ namespace TjuvOchPolis
 
             List<Person> people = PeopleFactory.CreatePeople(width, height);
 
+            foreach (var person in people)
+                Display.DrawPerson(person);
+
+
+
             // Rita första gången 
             foreach (var person in people)
             {
-                Console.SetCursorPosition(person.Position.X, person.Position.Y);
-                Console.Write(person.Symbol);
+                //  Console.SetCursorPosition(person.Position.X, person.Position.Y);
+                Display.DrawPerson(person);
+
+                // Console.Write(person.Symbol);
             }
 
             int stepCounter = 0;
             int stepsBeforeChange = 5;
 
-            // Huvudloop 
-            while (true)
+
+
+            // Huvudloop
+            bool running = true;
+
+            while (running)
             {
                 //  Radera gamla positioner
                 foreach (var person in people)
@@ -82,7 +98,7 @@ namespace TjuvOchPolis
                     {
                         if (thief.Position.X == citizen.Position.X && thief.Position.Y == citizen.Position.Y)
                         {
-                            Interactions.HandleRobbery(thief, citizen, people, width, height);
+                            Interactions.HandleRobbery(thief, citizen, people, width, height, newsFeed);
                         }
                     }
 
@@ -90,10 +106,11 @@ namespace TjuvOchPolis
                     {
                         if (thief.Position.X == police.Position.X && thief.Position.Y == police.Position.Y)
                         {
-                            Interactions.HandleArrest(police, thief, people, width, height, startX, startY, prisonWidth, prisonHeight);
+                            Interactions.HandleArrest(police, thief, people, width, height, startX, startY, prisonWidth, prisonHeight, newsFeed);
                         }
                     }
                 }
+
 
                 foreach (var police in people.OfType<Police>())
                 {
@@ -101,19 +118,47 @@ namespace TjuvOchPolis
                     {
                         if (police.Position.X == citizen.Position.X && police.Position.Y == citizen.Position.Y)
                         {
-                            Interactions.CitizenGreetings(citizen, police, people, width, height);
+                            Interactions.CitizenGreetings(citizen, police, people, width, height, newsFeed);
                         }
                     }
+                }
+
+                foreach (var person in people)
+                {
+                    Display.DrawPerson(person);
                 }
 
                 // Rita nya positioner
                 foreach (var person in people)
                 {
-                    Console.SetCursorPosition(person.Position.X, person.Position.Y);
-                    Console.Write(person.Symbol);
+                    // Console.SetCursorPosition(person.Position.X, person.Position.Y);
+                    // Console.Write(person.Symbol);
+
+                    Display.DrawPerson(person);
+
                 }
-                Thread.Sleep(400);
+
+                Display.DrawNews(newsFeed, width, height);
+                Display.DrawStatus(people, width, height);
+
+                Thread.Sleep(500);
+
+                if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape)
+                {
+                    running = false;
+                    Console.Clear();
+
+                    Display.DisplayResult(people, newsFeed);
+                    break;
+                }
+
+               
+
+
             }
+
+
+
 
             // Rita upp staden
             static void DrawBorder(int width, int height)
@@ -132,6 +177,9 @@ namespace TjuvOchPolis
                 }
                 Console.SetCursorPosition(2, 0);
                 Console.Write("City");
+
+                Console.SetCursorPosition(0, 25);
+                Console.Write("News Feed ============================");
             }
 
             static void DrawPrisonBorder(int prisonWidth, int prisonHeight, int startY, int startX)
@@ -152,8 +200,6 @@ namespace TjuvOchPolis
                 Console.Write("Prison");
 
             }
-
-
         }
     }
 }

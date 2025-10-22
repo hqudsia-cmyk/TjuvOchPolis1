@@ -13,6 +13,7 @@ namespace TjuvOchPolis
     {
         public int X { get; set; }
         public int Y { get; set; }
+
         private static Random rand = new Random();
 
         public Direction(int x, int y) { X = x; Y = y; }
@@ -30,6 +31,10 @@ namespace TjuvOchPolis
         public Direction Direction { get; set; }
         public char Symbol { get; set; }
         public Inventory Inventory { get; set; }
+        public int PrisonTime { get; set; } = 0;
+
+        public int PrisonCounter { get; set; } = 0;
+
 
         public Person(string name, Position position, Direction direction, char symbol, Inventory inventory)
         {
@@ -47,21 +52,42 @@ namespace TjuvOchPolis
 
         public void MoveInPrison(int prisonStartX, int prisonStartY, int prisonWidth, int prisonHeight)
         {
-            
-            Position = new Position(Position.X + Direction.X, Position.Y + Direction.Y);
+            PrisonCounter++;
+
+            if (PrisonCounter >= PrisonTime)
+            {
+                Symbol = 'T';
+                PrisonTime = 0;
+                PrisonCounter = 0;
+                Position = new Position(new Random().Next(1, 98), new Random().Next(1, 23));
+                return;
+            }
+
+
+            if (new Random().Next(10) == 0)
+                ChangeDirection();
+
+            int newX = Position.X + Direction.X;
+            int newY = Position.Y + Direction.Y;
+
 
             // Vänd riktning om vi träffar fängelsevägg
-            if (Position.X <= prisonStartX + 1 || Position.X >= prisonStartX + prisonWidth - 2)
+            if (newX <= prisonStartX + 1 || newX >= prisonStartX + prisonWidth - 2)
                 Direction = new Direction(-Direction.X, Direction.Y);
+            newX = Position.X + Direction.X;
 
-            if (Position.Y <= prisonStartY + 1 || Position.Y >= prisonStartY + prisonHeight - 2)
+            if (newY <= prisonStartY + 1 || newY >= prisonStartY + prisonHeight - 2)
                 Direction = new Direction(Direction.X, -Direction.Y);
+            newY = Position.Y + Direction.Y;
 
             // Se till att personen är inom gränserna
             Position = new Position(
-                Math.Clamp(Position.X, prisonStartX + 1, prisonStartX + prisonWidth - 2),
-                Math.Clamp(Position.Y, prisonStartY + 1, prisonStartY + prisonHeight - 2)
+              newX = Math.Clamp(newX, prisonStartX + 1, prisonStartX + prisonWidth - 2),
+              newY = Math.Clamp(newY, prisonStartY + 1, prisonStartY + prisonHeight - 2)
             );
+
+            Position = new Position(newX, newY);
+
         }
 
 
@@ -80,13 +106,19 @@ namespace TjuvOchPolis
 
     internal class Thief : Person
     {
+
         public Thief(string name, Position position)
             : base(name, position, Direction.RandomDirection(), 'T', new ThiefInventory()) { }
+        
+        
     }
 
-    internal class Citizen : Person
-    {
+        internal class Citizen : Person
+        {
         public Citizen(string name, Position position)
             : base(name, position, Direction.RandomDirection(), 'C', new CitizenInventory()) { }
-    }
+        }
+
+
+    
 }

@@ -35,6 +35,8 @@ namespace TjuvOchPolis1
             for (int i = 0; i < 30; i++)
                 people.Add(new Citizen(citizenName[i], new Position(rand.Next(1, width - 1), rand.Next(1, height - 1))));
 
+            
+
             return people;
         }
     }
